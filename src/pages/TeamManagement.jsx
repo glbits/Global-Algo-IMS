@@ -13,8 +13,8 @@ const TeamManagement = () => {
   // --- 1. DETERMINE WHO I CAN CREATE ---
   const getChildRole = () => {
     if (myRole === 'Admin') return 'BranchManager';
-    if (myRole === 'BranchManager') return 'HR';
-    if (myRole === 'HR') return 'Employee';
+   if (myRole === 'BranchManager') return 'TeamLead'; // Changed from HR
+    if (myRole === 'TeamLead') return 'Employee';
     return 'None';
   };
 

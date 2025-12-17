@@ -12,6 +12,9 @@ import LeadDetails from './pages/LeadDetails';
 import RaiseTicket from './pages/RaiseTicket';
 import AdminTicketDesk from './pages/AdminTicketDesk';
 import AdminAttendance from './pages/AdminAttendance';
+import TaskManager from './pages/TaskManager';
+import AdminUpload from './pages/AdminUpload';
+import LeadDistribution from './pages/LeadDistribution';
 
 function App() {
   return (
@@ -31,6 +34,9 @@ function App() {
           <Route path="/raise-ticket" element={<RaiseTicket />} />
           <Route path="/admin-tickets" element={<AdminTicketDesk />} />
           <Route path="/admin-attendance" element={<AdminAttendance />} />
+          <Route path="/tasks" element={<TaskManager />} />
+          <Route path="/admin-upload" element={<AdminUpload />} />
+          <Route path="/distribute" element={<LeadDistribution />} />
         </Route>
 
       </Routes>

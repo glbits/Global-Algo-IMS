@@ -140,12 +140,12 @@ const StatusToggle = () => {
   };
 
   const ALL_OPTIONS = [
-    { key: 'Online', icon: <Laptop size={16} />, allowed: ['BranchManager', 'HR', 'Employee'] },
+    { key: 'Online', icon: <Laptop size={16} />, allowed: ['TeamLead', 'Employee'] },
     { key: 'On-call', icon: <Phone size={16} />, allowed: ['Employee'] },
-    { key: 'Break', icon: <Coffee size={16} />, allowed: ['BranchManager', 'HR', 'Employee'] },
-    { key: 'Lunch Time', icon: <Utensils size={16} />, allowed: ['BranchManager', 'HR', 'Employee'] },
+    { key: 'Break', icon: <Coffee size={16} />, allowed: ['TeamLead', 'Employee'] },
+    { key: 'Lunch Time', icon: <Utensils size={16} />, allowed: ['TeamLead', 'Employee'] },
     { key: 'Evaluation', icon: <UserCheck size={16} />, allowed: ['Employee'] },
-    { key: 'Offline', icon: <Moon size={16} />, allowed: ['BranchManager', 'HR', 'Employee'] },
+    { key: 'Offline', icon: <Moon size={16} />, allowed: ['TeamLead', 'Employee'] },
   ];
 
   const visibleOptions = ALL_OPTIONS.filter(opt => opt.allowed.includes(role));

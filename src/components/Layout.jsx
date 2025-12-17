@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, CheckCircle, LogOut, Users, UserPlus, FileClock, Calendar, LifeBuoy } from 'lucide-react';
+import { LayoutDashboard, LogOut, Users, UserPlus, FileClock, Calendar, LifeBuoy, UploadCloud, Share2, CheckSquare } from 'lucide-react';
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ const Layout = () => {
 
         <nav className="flex-1 p-4 space-y-2">
 
-          {/* 1. DASHBOARD (NOW VISIBLE TO EVERYONE) */}
+          {/* DASHBOARD */}
           <button
             onClick={() => navigate('/dashboard')}
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/dashboard')}`}
@@ -36,29 +36,38 @@ const Layout = () => {
             <span>Dashboard</span>
           </button>
 
-          {/* 2. UPLOAD HISTORY (Strictly Admin Only) */}
+          {/* ADMIN: UPLOAD */}
           {role === 'Admin' && (
-            <button
-              onClick={() => navigate('/uploads')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/uploads')}`}
+            <button 
+              onClick={() => navigate('/admin-upload')}
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/admin-upload')}`}
             >
-              <FileClock size={20} />
-              <span>Upload History</span>
+              <UploadCloud size={20} />
+              <span>Upload Data</span>
             </button>
           )}
 
-          {/* 3. ATTENDANCE CALENDAR (Everyone) */}
-          {role !== 'Admin' && (
-            <button
-              onClick={() => navigate('/calendar')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/calendar')}`}
+          {/* MANAGERS: DISTRIBUTE LEADS */}
+          {role !== 'Employee' && (
+            <button 
+              onClick={() => navigate('/distribute')}
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/distribute')}`}
             >
-              <Calendar size={20} />
-              <span>Attendance History</span>
+              <Share2 size={20} />
+              <span>Distribute Leads</span>
             </button>
           )}
 
-          {/* 4. MY LEADS (Everyone EXCEPT Admin) */}
+          {/* TASKS (Everyone) */}
+          <button 
+            onClick={() => navigate('/tasks')}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/tasks')}`}
+          >
+            <CheckSquare size={20} />
+            <span>Task List</span>
+          </button>
+
+          {/* MY LEADS (Everyone EXCEPT Admin) */}
           {role !== 'Admin' && (
             <button
               onClick={() => navigate('/my-leads')}
@@ -69,7 +78,7 @@ const Layout = () => {
             </button>
           )}
 
-          {/* 5. ADD MEMBER (Managers Only - Employee Hidden) */}
+          {/* ADD MEMBER (Managers Only) */}
           {role !== 'Employee' && (
             <button
               onClick={() => navigate('/team')}
@@ -80,7 +89,7 @@ const Layout = () => {
             </button>
           )}
 
-          {/* SUPPORT / TICKETS (Conditional Link) */}
+          {/* SUPPORT / TICKETS */}
           <button
             onClick={() => navigate(
               (role === 'Admin' || role === 'BranchManager') ? '/admin-tickets' : '/raise-ticket'
@@ -92,8 +101,7 @@ const Layout = () => {
             <span>{(role === 'Admin' || role === 'BranchManager') ? 'Support Desk' : 'Raise Ticket'}</span>
           </button>
 
-
-          {/* ADMIN ATTENDANCE MONITOR */}
+          {/* ATTENDANCE MONITOR (Admin Only) */}
           {role === 'Admin' && (
             <button
               onClick={() => navigate('/admin-attendance')}
@@ -101,6 +109,17 @@ const Layout = () => {
             >
               <Users size={20} />
               <span>Staff Attendance</span>
+            </button>
+          )}
+          
+           {/* MY ATTENDANCE HISTORY (Everyone EXCEPT Admin) */}
+          {role !== 'Admin' && role !== 'BranchManager' && (
+            <button
+              onClick={() => navigate('/calendar')}
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/calendar')}`}
+            >
+              <Calendar size={20} />
+              <span>Attendance History</span>
             </button>
           )}
 
