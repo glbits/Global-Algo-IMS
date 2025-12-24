@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Users, UserPlus, FileClock, Calendar, LifeBuoy, UploadCloud, Share2, CheckSquare } from 'lucide-react';
+import { LayoutDashboard, LogOut, Users, UserPlus, FileClock, Calendar, LifeBuoy, UploadCloud, Share2, CheckSquare, Archive } from 'lucide-react';
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const Layout = () => {
 
           {/* ADMIN: UPLOAD */}
           {role === 'Admin' && (
-            <button 
+            <button
               onClick={() => navigate('/admin-upload')}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/admin-upload')}`}
             >
@@ -49,7 +49,7 @@ const Layout = () => {
 
           {/* MANAGERS: DISTRIBUTE LEADS */}
           {role !== 'Employee' && (
-            <button 
+            <button
               onClick={() => navigate('/distribute')}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/distribute')}`}
             >
@@ -59,7 +59,7 @@ const Layout = () => {
           )}
 
           {/* TASKS (Everyone) */}
-          <button 
+          <button
             onClick={() => navigate('/tasks')}
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/tasks')}`}
           >
@@ -75,6 +75,17 @@ const Layout = () => {
             >
               <Users size={20} />
               <span>My Leads</span>
+            </button>
+          )}
+
+          {/* ADMIN ONLY: DEAD ARCHIVE */}
+          {role === 'Admin' && (
+            <button
+              onClick={() => navigate('/archive')}
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/archive')}`}
+            >
+              <Archive size={20} />
+              <span>Dead Archive</span>
             </button>
           )}
 
@@ -111,8 +122,8 @@ const Layout = () => {
               <span>Staff Attendance</span>
             </button>
           )}
-          
-           {/* MY ATTENDANCE HISTORY (Everyone EXCEPT Admin) */}
+
+          {/* MY ATTENDANCE HISTORY (Everyone EXCEPT Admin) */}
           {role !== 'Admin' && role !== 'BranchManager' && (
             <button
               onClick={() => navigate('/calendar')}
