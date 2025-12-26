@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Users, UserPlus, FileClock, Calendar, LifeBuoy, UploadCloud, Share2, CheckSquare, Archive } from 'lucide-react';
+import { LayoutDashboard, LogOut, Users, UserPlus, FileClock, Calendar, LifeBuoy, UploadCloud, Share2, CheckSquare, Archive,FileSpreadsheet } from 'lucide-react';
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -57,6 +57,29 @@ const Layout = () => {
               <span>Distribute Leads</span>
             </button>
           )}
+
+          {/* ADMIN: UPLOAD & HISTORY */}
+{role === 'Admin' && (
+  <>
+    {/* 1. Upload New File */}
+    <button
+      onClick={() => navigate('/admin-upload')}
+      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/admin-upload')}`}
+    >
+      <UploadCloud size={20} />
+      <span>Upload Data</span>
+    </button>
+
+    {/* 2. View History (ADD THIS BUTTON) */}
+    <button
+      onClick={() => navigate('/uploads')}
+      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${isActive('/uploads')}`}
+    >
+      <FileSpreadsheet size={20} />
+      <span>Upload History</span>
+    </button>
+  </>
+)}
 
           {/* TASKS (Everyone) */}
           <button
