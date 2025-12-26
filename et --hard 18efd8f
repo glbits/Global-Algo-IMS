@@ -1,0 +1,31 @@
+[33m612bd40[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Merge branch 'main' of https://github.com/Ashish050488/Global-Algo-IMS
+[33mf840411[m feat:tsx deleted
+[33m63f9b69[m Merge branch 'glbits:main' into main
+[33ma95b218[m feat:upload excel updated
+[33m956aa52[m Merge pull request #8 from Ashish050488/main
+[33m18efd8f[m feat:cleanup
+[33m858f37d[m Merge pull request #7 from Ashish050488/main
+[33m0331683[m Merge branch 'main' of https://github.com/Ashish050488/Global-Algo-IMS
+[33m662d060[m feat:node modules removed
+[33ma1c002e[m Fix: Remove node_modules from repo
+[33m415ea79[m Merge pull request #6 from Ashish050488/main
+[33m63506cb[m Merge branch 'glbits:main' into main
+[33m950dca9[m feat:fixed db error
+[33md4faa0d[m feat:dont know
+[33m79cff6c[m Merge pull request #5 from Ashish050488/main
+[33m0540e0e[m feat:ignore
+[33ma0f0a4e[m Fix: Remove env file from remote
+[33m4508cc7[m feat:backend integrated
+[33me764e55[m feat:Dashboard Ui changed
+[33me9ecf34[m Merge pull request #4 from Ashish050488/main
+[33m4353bfe[m feat:mvp ready
+[33me521d6f[m Merge upstream main into fork
+[33m812754c[m Initial commit
+[33m7693907[m Merge pull request #3 from glbits/pr-merge-test
+[33md87e8bf[m[33m ([m[1;31mupstream/pr-merge-test[m[33m, [m[1;31morigin/pr-merge-test[m[33m)[m Resolved package.json conflicts and added nodemon; regenerated lockfile
+[33mc110861[m Merge pull request #1 from Ashish050488/main
+[33m9668586[m feed
+[33m69addf1[m backend complete
+[33mc9ee125[m chore: backend complete
+[33m5a4308f[m UI done
+[33m5a48a80[m Initial commit
