@@ -61,6 +61,8 @@ const MyLeads = () => {
           <table className="w-full text-left border-collapse">
             <thead className="bg-brand-light text-white">
               <tr>
+                {/* NEW COLUMN HEADER */}
+                <th className="p-4 font-semibold w-16">#</th> 
                 <th className="p-4 font-semibold">Phone Number</th>
                 <th className="p-4 font-semibold">Name / Source</th>
                 <th className="p-4 font-semibold">Status</th>
@@ -68,12 +70,17 @@ const MyLeads = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {leads.map((lead) => (
+              {leads.map((lead, index) => (
                 <tr 
                   key={lead._id} 
                   className="hover:bg-gray-50 transition cursor-pointer"
                   onClick={() => navigate('/lead-details', { state: { lead } })} 
                 >
+                  {/* NEW NUMBERING CELL */}
+                  <td className="p-4 font-bold text-gray-400 text-sm">
+                    {index + 1}
+                  </td>
+
                   <td className="p-4 font-mono text-brand-medium font-bold">
                     <div className="flex items-center gap-2">
                       <Phone size={16} />

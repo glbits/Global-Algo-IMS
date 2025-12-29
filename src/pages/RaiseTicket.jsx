@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { MessageSquare, AlertCircle, CheckCircle, Lock, Send } from 'lucide-react';
+import { MessageSquare, AlertCircle, CheckCircle, Lock, Send, Tag } from 'lucide-react';
 
 const RaiseTicket = () => {
   const [tickets, setTickets] = useState([]);
   const [formData, setFormData] = useState({
-    recipient: 'Admin', // Default
     category: 'IT Issue',
     priority: 'Medium',
     subject: '',
     description: ''
   });
   const [loading, setLoading] = useState(false);
-  const role = localStorage.getItem('role');
 
   useEffect(() => {
     fetchMyTickets();
@@ -31,9 +29,10 @@ const RaiseTicket = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      // Backend handles recipient logic now based on Priority/Role
       await api.post('/tickets/create', formData);
       alert("Ticket Sent Successfully");
-      setFormData({ ...formData, subject: '', description: '' }); // Reset text fields
+      setFormData({ ...formData, subject: '', description: '' }); 
       fetchMyTickets();
     } catch (err) {
       alert("Failed to send ticket");
@@ -55,38 +54,6 @@ const RaiseTicket = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          
-          {/* RECIPIENT SELECTOR (Only for Employees) */}
-          {role === 'Employee' && (
-            <div>
-              <label className="text-xs font-bold text-gray-500 uppercase">Send To</label>
-              <div className="flex gap-4 mt-1">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="radio" 
-                    name="recipient" 
-                    value="Admin"
-                    checked={formData.recipient === 'Admin'}
-                    onChange={e => setFormData({...formData, recipient: e.target.value})}
-                    className="accent-red-600"
-                  />
-                  <span className="text-sm font-medium">Admin (Head Office)</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input 
-                    type="radio" 
-                    name="recipient" 
-                    value="BranchManager"
-                    checked={formData.recipient === 'BranchManager'}
-                    onChange={e => setFormData({...formData, recipient: e.target.value})}
-                    className="accent-brand-medium"
-                  />
-                  <span className="text-sm font-medium">Branch Manager</span>
-                </label>
-              </div>
-            </div>
-          )}
-
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-bold text-gray-500 uppercase">Category</label>
@@ -111,7 +78,7 @@ const RaiseTicket = () => {
               >
                 <option>Low</option>
                 <option>Medium</option>
-                <option>High</option>
+                <option value="High">High (Direct to Admin)</option>
               </select>
             </div>
           </div>
@@ -152,7 +119,7 @@ const RaiseTicket = () => {
       {/* HISTORY SECTION */}
       <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-gray-400">
         <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-          <MessageSquare /> My Sent Tickets
+          <MessageSquare /> My Ticket History
         </h2>
         <div className="space-y-3 max-h-[500px] overflow-y-auto">
           {tickets.length === 0 ? (
@@ -161,8 +128,8 @@ const RaiseTicket = () => {
             tickets.map(ticket => (
               <div key={ticket._id} className="p-4 border border-gray-100 rounded-lg hover:bg-gray-50">
                 <div className="flex justify-between items-start mb-2">
-                  <span className="text-xs font-bold bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
-                    To: {ticket.recipient}
+                  <span className="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                    Sent To: {ticket.recipient}
                   </span>
                   <span className={`flex items-center gap-1 text-xs font-bold ${ticket.status === 'Resolved' ? 'text-green-600' : 'text-orange-500'}`}>
                     {ticket.status === 'Resolved' ? <CheckCircle size={12}/> : <AlertCircle size={12}/>}
@@ -171,7 +138,13 @@ const RaiseTicket = () => {
                 </div>
                 <h3 className="font-bold text-gray-800">{ticket.subject}</h3>
                 <p className="text-sm text-gray-500 mt-1">{ticket.description}</p>
-                <p className="text-xs text-gray-400 mt-2">{new Date(ticket.createdAt).toLocaleDateString()}</p>
+                
+                {ticket.status === 'Resolved' && (
+                  <div className="mt-3 bg-green-50 p-2 rounded border border-green-100">
+                    <p className="text-xs font-bold text-green-800">Resolution:</p>
+                    <p className="text-xs text-green-700">{ticket.resolutionDetails}</p>
+                  </div>
+                )}
               </div>
             ))
           )}

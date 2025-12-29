@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
-import { Search, User, Check, X, AlertTriangle } from 'lucide-react';
+import { Search, User, Check, X, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const AdminAttendance = () => {
   const [users, setUsers] = useState([]);
@@ -9,12 +9,19 @@ const AdminAttendance = () => {
   const [records, setRecords] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // 1. Load All Users on Mount
+  // 1. Load Users (FILTERED)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const res = await api.get('/auth/all-users');
-        setUsers(res.data);
+        
+        // FIX: Filter out Admin and BranchManager. 
+        // Only show people who actually mark attendance (TeamLead & Employee)
+        const trackableStaff = res.data.filter(u => 
+          u.role === 'TeamLead' || u.role === 'Employee'
+        );
+        
+        setUsers(trackableStaff);
       } catch (err) {
         console.error("Failed to load users");
       }
@@ -35,7 +42,6 @@ const AdminAttendance = () => {
     const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
     try {
-      // Pass the selectedUser ID to the backend
       const res = await api.get(`/attendance/calendar?month=${month}&year=${year}&targetUserId=${selectedUser}`);
       setRecords(res.data);
     } catch (err) {
@@ -71,7 +77,7 @@ const AdminAttendance = () => {
     const onCall = record.durations?.['On-call'] || 0;
     const workHours = ((online + onCall) / 3600).toFixed(1);
 
-    // NEW: Check Late Status
+    // Check Late Status
     if (record.isLate) {
       return { 
         type: 'late', 
@@ -84,8 +90,34 @@ const AdminAttendance = () => {
     return { type: 'present', label: 'On Time', subLabel: `${workHours} hrs` };
   };
 
-  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-  const daysArray = [...Array(daysInMonth).keys()].map(i => i + 1);
+  // --- CALENDAR GRID GENERATION ---
+  const getCalendarLayout = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfWeek = new Date(year, month, 1).getDay(); // 0=Sun, 1=Mon...
+    
+    const blanks = Array(firstDayOfWeek).fill(null);
+    const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+    
+    return { blanks, days };
+  };
+
+  const { blanks, days } = getCalendarLayout();
+
+  // --- NAVIGATION CONTROLS ---
+  const today = new Date();
+  
+  // Disable Next if showing Current Month
+  const isCurrentMonth = currentDate.getMonth() === today.getMonth() && 
+                        currentDate.getFullYear() === today.getFullYear();
+
+  // Find selected user's joining date to Disable Prev
+  const currentUserData = users.find(u => u._id === selectedUser);
+  const joiningDate = new Date(currentUserData?.createdAt || '2024-01-01'); 
+  const isJoiningMonth = currentDate.getMonth() === joiningDate.getMonth() && 
+                        currentDate.getFullYear() === joiningDate.getFullYear();
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -116,20 +148,50 @@ const AdminAttendance = () => {
       {/* CALENDAR VIEW */}
       {selectedUser ? (
         <div className="bg-white p-6 rounded-xl shadow-lg border-t-4 border-gray-400">
-          <div className="flex justify-between items-center mb-4">
-             <h2 className="font-bold text-lg text-gray-700">Attendance for {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
-             <div className="space-x-2">
-                <button onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))} className="px-3 py-1 bg-gray-200 rounded text-sm">&lt; Prev</button>
-                <button onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))} className="px-3 py-1 bg-gray-200 rounded text-sm">Next &gt;</button>
+          <div className="flex justify-between items-center mb-6">
+             <h2 className="font-bold text-lg text-gray-700">
+               Attendance for {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
+             </h2>
+             <div className="flex gap-2">
+                <button 
+                  onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))} 
+                  disabled={isJoiningMonth}
+                  className={`flex items-center gap-1 px-4 py-2 rounded text-sm font-bold transition ${
+                    isJoiningMonth 
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                  }`}
+                >
+                  <ChevronLeft size={16} /> Prev
+                </button>
+                
+                <button 
+                  onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))} 
+                  disabled={isCurrentMonth}
+                  className={`flex items-center gap-1 px-4 py-2 rounded text-sm font-bold transition ${
+                    isCurrentMonth 
+                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                      : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                  }`}
+                >
+                  Next <ChevronRight size={16} />
+                </button>
              </div>
           </div>
 
           <div className="grid grid-cols-7 gap-4">
+            {/* Header Row */}
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
               <div key={d} className="text-center font-bold text-gray-400 uppercase text-xs mb-2">{d}</div>
             ))}
             
-            {daysArray.map(day => {
+            {/* Blank Fillers for offset */}
+            {blanks.map((_, i) => (
+              <div key={`blank-${i}`} className="min-h-20 bg-transparent"></div>
+            ))}
+
+            {/* Actual Days */}
+            {days.map(day => {
               const status = getDayStatus(day);
               let bgClass = "bg-gray-50 border-gray-200 text-gray-400"; // Default
               
@@ -138,15 +200,17 @@ const AdminAttendance = () => {
               if (status.type === 'late') bgClass = "bg-yellow-50 border-yellow-300 text-yellow-800";
 
               return (
-                <div key={day} className={`border rounded-lg p-3 min-h-20 flex flex-col justify-between ${bgClass}`}>
+                <div key={day} className={`border rounded-lg p-3 min-h-[80px] flex flex-col justify-between transition hover:shadow-md ${bgClass}`}>
                   <span className="font-bold text-md">{day}</span>
                   <div className="text-xs font-bold flex flex-col gap-1">
-                    <div className="flex items-center gap-1">
-                      {status.type === 'present' && <Check size={12} />}
-                      {status.type === 'absent' && <X size={12} />}
-                      {status.type === 'late' && <AlertTriangle size={12} />}
-                      {status.label}
-                    </div>
+                    {status.type !== 'future' && (
+                      <div className="flex items-center gap-1">
+                        {status.type === 'present' && <Check size={12} />}
+                        {status.type === 'absent' && <X size={12} />}
+                        {status.type === 'late' && <AlertTriangle size={12} />}
+                        {status.label}
+                      </div>
+                    )}
                     {status.subLabel && <span className="opacity-75 font-mono">{status.subLabel}</span>}
                   </div>
                 </div>

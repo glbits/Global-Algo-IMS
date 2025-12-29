@@ -34,6 +34,17 @@ const TeamManagement = () => {
     }
   };
 
+  const handleDelete = async (userId) => {
+  if(!window.confirm("Are you sure? This will fire the employee and return their leads to you.")) return;
+  
+  try {
+    await api.delete(`/auth/user/${userId}`);
+    alert("User Removed.");
+    fetchTeam(); // Refresh list
+  } catch (err) {
+    alert("Failed to delete user");
+  }
+};
   // --- 3. HANDLE CREATE USER ---
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -166,7 +177,7 @@ const TeamManagement = () => {
                       </span>
                     </td>
                     <td className="p-3">
-                      <button className="text-red-500 hover:text-red-700 text-xs font-bold disabled:opacity-50" disabled>
+                      <button onClick={() => handleDelete(sub._id)}    className="text-red-500 hover:text-red-700 text-xs font-bold disabled:opacity-50" >
                         Remove (Admin Only)
                       </button>
                     </td>
