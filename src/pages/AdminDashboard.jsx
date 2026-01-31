@@ -15,12 +15,13 @@ const Dashboard = () => {
 
   // ROLES
   const isAdmin = role === 'Admin';
+  const isLeadManager = role === 'LeadManager';
   const isBranchManager = role === 'BranchManager';
   const isTeamLead = role === 'TeamLead';
   const isEmployee = role === 'Employee';
 
   // Can Monitor Others? (Admin, BM, TL)
-  const isManager = isAdmin || isBranchManager || isTeamLead;
+  const isManager = isAdmin || isLeadManager || isBranchManager || isTeamLead;
   // Has Personal Attendance? (Employee & TL)
   const hasAttendance = isEmployee || isTeamLead;
 
@@ -101,6 +102,21 @@ const Dashboard = () => {
           {/* Row 1: Priority Tasks */}
           <div className="h-full">
             <PriorityTasks />
+          </div>
+        </div>
+      )}
+
+      {/* A2. LEAD MANAGER VIEW (Admin-like, but no Tasks module) */}
+      {isLeadManager && managerData && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <LiveTeamStatus data={managerData.attendanceSummary} />
+          <LeadUtilization data={managerData.leadStats} />
+          <div className="bg-white rounded-xl shadow-lg p-5 flex items-center justify-between">
+            <div>
+              <p className="text-gray-500 text-xs font-bold uppercase">My Collection</p>
+              <p className="text-2xl font-black text-green-700">₹{empStats?.earnings?.toLocaleString() || 0}</p>
+            </div>
+            <Wallet className="text-green-200" size={32} />
           </div>
         </div>
       )}
